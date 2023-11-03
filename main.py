@@ -8,6 +8,9 @@ from concurrent.futures import ThreadPoolExecutor
 from datetime import datetime
 from tqdm import tqdm
 
+import pathlib
+import os
+
 import api
 from db import DB, Data, Puzzle
 from scraper import Scraper
@@ -101,6 +104,21 @@ def validate_args(parser):
     # Need to specify some data to download!
     if not args.full_stats and not args.puzzle and not args.stats:
         parser.error("Need to specify at least one of full_stats | puzzle | stats")
+
+    if not os.path.exists(args.nyts_cookie):
+        err = (
+            "Can't find %s; Consult README.md and use cookie.py to make it"
+            % args.nyts_cookie
+        )
+        parser.error(err)
+
+    if not os.path.exists(args.config):
+        parent = pathlib.Path(__file__).parent.resolve()
+        default = os.path.join(parent, os.path.basename(args.config))
+        if os.path.exists(default):
+            args.config = default
+        else:
+            parser.error("Can't locate %s" % args.config)
 
     return args
 
