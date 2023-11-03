@@ -23,11 +23,10 @@ info:
     content-type: application/json
 stats:
   url: 'https://www.nytimes.com/svc/crosswords/v6/game/{puzzle_id}.json'
-  qps: 5 
-  threads: 10
 puzzle:
   # {type} is either 'mini' or 'daily'
   # {date-str} is YYYY-MM-DD (strftime("%Y-%m-%d"))
   url: 'https://www.nytimes.com/svc/crosswords/v6/puzzle/{type}/{date-str}.json'
+general:
   qps: 5 
   threads: 10
