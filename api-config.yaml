@@ -1,0 +1,33 @@
+user:
+  url: https://samizdat-graphql.nytimes.com/graphql/v2
+  query:
+    operationName: UserQuery 
+    query: >
+      query UserQuery {
+          user {
+              userInfo {
+                  regiId
+                  subscriptions
+              }
+          }
+      }
+  headers: 
+    content-type: application/json
+    nyt-app-type: games-phoenix
+    nyt-app-version: 1.0.0
+    nyt-token: MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAiKjdfob/ixNCvLETwnQ3AalkGSm9NX4gcRbOudrtHmBmIJbWb8Xgu3QH516Edr1qD7A+w+5d0p/WsNCpWDLrqfjTIwMft+jtOQG44l7akD9yi9Gaq/6hS3cuntkY25AYR3WtQPqrtxClX+qQdhMmzlA0sRAXKM8dSbIpsNV9uUOclt3JwB4omwFGj4J+pqzsfYZfB/tlx+BPGjCYGNcZ9O9UvtCpLRLgCJmTugL6V/U581gY8mqp+22aVjbEJik+F0j8xTNSxCOV2PLMpNrRSiDZ8FaKtq8ap/HPey5M7qYZQqclfqsEJMXG/KE3PiaTIbO37caFa80FvzfV8MZw1wIDAQAB
+info:
+  url: 'https://www.nytimes.com/svc/crosswords/v3/{userId}/puzzles.json'
+  max-chunk-size: 100
+  headers:
+    content-type: application/json
+stats:
+  url: 'https://www.nytimes.com/svc/crosswords/v6/game/{puzzle_id}.json'
+  qps: 5 
+  threads: 10
+puzzle:
+  # {type} is either 'mini' or 'daily'
+  # {date-str} is YYYY-MM-DD (strftime("%Y-%m-%d"))
+  url: 'https://www.nytimes.com/svc/crosswords/v6/puzzle/{type}/{date-str}.json'
+  qps: 5 
+  threads: 10
