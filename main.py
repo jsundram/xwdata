@@ -157,7 +157,8 @@ def main():
 
         # Get puzzle info for missing dates
         pinfo = nyt.get_puzzle_info(dates, ptype)
-        urls = [nyt.get_stats_url(p) for p in pinfo if p["solved"]]
+        solved = [p  for p in pinfo if p["solved"]]
+        urls = [nyt.get_stats_url(p) for p in solved]
 
         # Get stats for new solved puzzles
         stats = get(nyt, urls, "Getting %s stats" % ptype)
