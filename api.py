@@ -23,14 +23,19 @@ def get_config(config_file):
 
 def get_user_id(session, config):
     r = session.post(config["url"], json=config["query"], headers=config["headers"])
+    user_id = None
     try:
         # TODO: check r.status_code?
         result = r.json()
-        return result["data"]["user"]["userInfo"]["regiId"]
+        user_id = result["data"]["user"]["userInfo"]["regiId"]
     except Exception as e:
         print(e)
-        # continue the long tradition of hard-coding the developer's own id...
-        return "61484727"
+
+    # Most likely cause of this is auth failure due to expired cookie.
+    if user_id is None:
+        raise Exception("No User ID found; regenerate your cookie file.")
+
+    return user_id
 
 
 class Api:
