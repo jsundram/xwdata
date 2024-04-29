@@ -73,7 +73,7 @@ The program will create the directory you pass in  (DATA_DIR above) if it doesn'
         stats/
             daily.csv
             mini.csv
-				full_stats/            
+        full_stats/            
             mini/
                 2020/09/30/stats.json
             daily/
