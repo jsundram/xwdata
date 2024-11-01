@@ -1,5 +1,6 @@
 import json
 import requests
+import time
 import yaml
 from tqdm import tqdm
 
@@ -25,15 +26,18 @@ def get_user_id(session, config):
     r = session.post(config["url"], json=config["query"], headers=config["headers"])
     user_id = None
     try:
-        # TODO: check r.status_code?
-        result = r.json()
-        user_id = result["data"]["user"]["userInfo"]["regiId"]
+        if r.ok:
+            result = r.json()
+            user_id = result["data"]["user"]["userInfo"]["regiId"]
+        else:
+            r.raise_for_status()
     except Exception as e:
         print(e)
 
     # Most likely cause of this is auth failure due to expired cookie.
+    # Or ... server flakiness?
     if user_id is None:
-        raise Exception("No User ID found; regenerate your cookie file.")
+        raise Exception("Unable to get user_id. Either retry or regenerate your cookie file.")
 
     return user_id
 
@@ -89,11 +93,21 @@ class Api:
         no_progress = len(chunks) == 0
         progress_bar = tqdm(chunks, disable=no_progress, desc="getting info")
         for chunk in progress_bar:
-            args = get_args(chunk)
-            status = "%s - %s" % (args["date_start"], args["date_end"])
-            progress_bar.set_postfix_str(status)
-            r = self.session.get(config["url"], params=args, headers=config["headers"])
-            j = r.json()
-            if j.get("status") == "OK":
-                results.extend(j.get("results", []))
+            success, attempts = 0, False
+            while not success and attempts < 3:
+                attempts += 1
+                args = get_args(chunk)
+                status = "%s - %s" % (args["date_start"], args["date_end"])
+                progress_bar.set_postfix_str(status)
+                r = self.session.get(config["url"], params=args, headers=config["headers"])
+                if r.ok:
+                    j = r.json()
+                    if j.get("status") == "OK":
+                        results.extend(j.get("results", []))
+                    success = True
+                else:
+                    print("Error: %s %s %s" % (r.status_code, r.text, r.url))
+                    # Sleep for a second in case there's an intermittent issue.
+                    time.sleep(1)
+
         return results
